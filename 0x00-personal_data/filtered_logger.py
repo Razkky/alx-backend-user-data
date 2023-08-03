@@ -20,7 +20,13 @@ def filter_datum(fields: List[str], redaction: str,
 
 def get_logger() -> logging.Logger:
     """Returns a logging.Logger object"""
-    return logging.getLogger('user_data')
+    logger = logging.getLogger('user_data')
+    logger.setLevel(logging.INFO)
+    formatter = RedactingFormatter(pii_fields=PII_FIELDS)
+    stream_handler = logging.StreamHandler(sys.stdout)
+    logger.addHandler(stream_handler)
+
+    return logger
 
 
 class RedactingFormatter(logging.Formatter):
