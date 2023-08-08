@@ -20,7 +20,7 @@ if not auth:
 
 
 @app.before_request
-def before_request():
+def before_request() -> None:
     paths = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
     if auth:
         if auth.require_auth(request.path, paths):
@@ -29,12 +29,6 @@ def before_request():
             if not auth.current_user(request):
                 abort(403)
 
-
-@app.errorhandler(404)
-def not_found(error) -> str:
-    """ Not found handler
-    """
-    return jsonify({"error": "Not found"}), 404
 
 
 @app.errorhandler(401)
