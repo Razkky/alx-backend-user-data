@@ -30,7 +30,6 @@ def before_request() -> None:
                 abort(403)
 
 
-
 @app.errorhandler(401)
 def unauthorized(error) -> str:
     """Unauthorized handler
