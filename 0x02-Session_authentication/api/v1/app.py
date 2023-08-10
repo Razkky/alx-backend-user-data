@@ -27,7 +27,11 @@ else:
 @app.before_request
 def before_request() -> None:
     """Run before every request and check for url and headers"""
-    paths = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/', '/api/v1/auth_session/login/']
+    paths = ['/api/v1/status/',
+             '/api/v1/unauthorized/',
+             '/api/v1/forbidden/',
+             '/api/v1/auth_session/login/'
+             ]
     if auth:
         if auth.require_auth(request.path, paths):
             if not auth.authorization_header(request):
@@ -44,6 +48,7 @@ def not_found(error) -> str:
     """ Not found handler
     """
     return jsonify({"error": "Not found"}), 404
+
 
 @app.errorhandler(401)
 def unauthorized(error) -> str:
