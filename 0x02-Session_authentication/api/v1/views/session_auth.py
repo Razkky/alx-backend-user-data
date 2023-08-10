@@ -35,4 +35,23 @@ def session_auth_login() -> str:
             response.set_cookie(session_name, session_id)
             return response
         else:
-            return jsonify({"error": "wrong password"})
+            return jsonify({"error": "wrong password"}), 401
+
+
+@app_views.route('/auth_session/logout',
+                 methods=["DELETE"],
+                 strict_slashes=False)
+def session_logout() -> str:
+    """
+        DELETE /api/v1/auth_session/logut
+        logout a user from a sessiona and
+        return empty json
+    """
+    from api.v1.app import auth
+    from api.v1.auth.session_auth import SessionAuth
+    auth = SessionAuth()
+    try:
+        auth.destroy_session(request)
+    except Exception:
+        abort(404)
+    return jsonify({}), 200
