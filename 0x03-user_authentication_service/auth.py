@@ -64,3 +64,13 @@ class Auth:
             return user
         except Exception:
             return None
+
+    def destroy_session(self, user_id: int) -> None:
+        """Delete a session_id from a user"""
+        if not user_id:
+            return None
+        try:
+            self._db.update_user(user_id, session_id=None)
+            return None
+        except Exception:
+            return None
