@@ -58,3 +58,22 @@ class DB:
             return user
         else:
             raise NoResultFound
+
+    def update_user(self, user_id: int, **kwargs: dict) -> None:
+        """Update a user object from the database"""
+
+        user = DB.find_user_by(self, id=user_id)
+        defult_columns = [
+            'id',
+            'email',
+            'hashed_password',
+            'session_id',
+            'reset_token'
+            ]
+        for key, value in kwargs.items():
+            if key in defult_columns:
+                setattr(user, key, value)
+            else:
+                raise ValueError
+
+        self._session.commit()
