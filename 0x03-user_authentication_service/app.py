@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Starts up a flask application"""
-from flask import Flask, jsonify, request, make_response, abort
+from flask import Flask, jsonify, request, make_response, abort,
+from flask import redirect, url_for
 from auth import Auth
 
 
@@ -45,7 +46,7 @@ def users():
 
 
 @app.route('/sessions', methods=["POST"], strict_slashes=False)
-def sessions():
+def login():
     """Create new session and return session_id in header as cookie"""
     data = request.form
     if 'email' not in data:
@@ -66,6 +67,20 @@ def sessions():
             abort(401)
     except Exception:
         abort(401)
+
+
+@app.route('/sessions', methods=["DELETE"], strict_slashes=False)
+def logout():
+    """Log out from a login session"""
+    data = request.form
+    if 'session_id' in data:
+        session_id = data.get('session_id')
+        try:
+            user = AUTH.get_user_from_session_id(session_id)
+            AUTH.destroy_session(user.id)
+            return redirect(url_for('index'))
+        except Exception:
+            abort(403)
 
 
 if __name__ == "__main__":
