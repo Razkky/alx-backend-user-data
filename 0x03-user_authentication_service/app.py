@@ -131,7 +131,8 @@ def reset_password() -> str:
         reset_token = data.get('reset_token')
         try:
             AUTH.update_password(reset_token, password)
-            return jsonify({"email": email, "message": "Password updated"})
+            return jsonify(
+                {"email": email, "message": "Password updated"}), 200
         except ValueError:
             abort(403)
 
