@@ -46,7 +46,7 @@ def users():
 
 
 @app.route('/sessions', methods=["POST"], strict_slashes=False)
-def login():
+def login() -> str:
     """Create new session and return session_id in header as cookie"""
     data = request.form
     if 'email' not in data:
@@ -70,15 +70,15 @@ def login():
 
 
 @app.route('/sessions', methods=["DELETE"], strict_slashes=False)
-def logout():
+def logout() -> None:
     """Log out from a login session"""
     session_id = request.cookies.get('session_id')
     if session_id:
-        try:
-            user = AUTH.get_user_from_session_id(session_id)
+        user = AUTH.get_user_from_session_id(session_id)
+        if user:
             AUTH.destroy_session(user.id)
             return redirect(url_for('index'))
-        except Exception:
+        else:
             abort(403)
     else:
         abort(403)
