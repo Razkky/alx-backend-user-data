@@ -27,3 +27,14 @@ class Auth:
         except NoResultFound:
             user = self._db.add_user(email, _hash_password(password))
             return user
+
+    def valid_login(self, email: str, password: str) -> bool:
+        """validate a user"""
+        try:
+            user = self._db.find_user_by(email=email)
+            if checkpw(password.encode('utf-8'), user.hashed_password):
+                return True
+            else:
+                return False
+        except Exception:
+            return False
