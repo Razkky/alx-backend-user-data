@@ -74,3 +74,14 @@ class Auth:
             return None
         except Exception:
             return None
+
+    def get_reset_password_token(self, email: str) -> str:
+        """Generate a uuid for user reset_token"""
+        if email:
+            try:
+                user = self._db.find_user_by(email=email)
+                reset_token = str(uuid4())
+                self.update_user(user.id, reset_token=reset_token)
+                return reset_token
+            except NoResultFound:
+                raise ValueError
