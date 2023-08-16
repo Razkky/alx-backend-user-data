@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Starts up a flask application"""
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, make_response, abort
 from auth import Auth
 
 
@@ -42,6 +42,30 @@ def users():
             })
     except ValueError:
         return jsonify({"message": "email already registered"})
+
+
+@app.route('/sessions', methods=["POST"], strict_slashes=False)
+def sessions():
+    """Create new session and return session_id in header as cookie"""
+    data = request.form
+    if 'email' not in data:
+        abort(401)
+    if 'password' not in data:
+        abort(401)
+    try:
+        email = data.get('email')
+        password = data.get('password')
+        if AUTH.valid_login(email, password):
+            session_id = AUTH.create_session(email)
+            response = make_response(jsonify(
+                    {"email": email, "message": "logged in"}
+                ))
+            response.set_cookie('session_id', session_id)
+            return response
+        else:
+            abort(401)
+    except Exception:
+        abort(401)
 
 
 if __name__ == "__main__":
