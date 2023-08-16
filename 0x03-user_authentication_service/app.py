@@ -127,7 +127,7 @@ def reset_password() -> str:
         return jsonify({"message": "reset_token required"}), 400
     else:
         email = data.get('email')
-        password = data.get('password')
+        password = data.get('new_password')
         reset_token = data.get('reset_token')
         try:
             AUTH.update_password(reset_token, password)
