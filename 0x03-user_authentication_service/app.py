@@ -103,7 +103,7 @@ def profile() -> str:
 
 
 @app.route('/reset_password', methods=["POST"], strict_slashes=False)
-def reset_password() -> str:
+def reset_token() -> str:
     """Generate a reset_token"""
     data = request.form
     if 'email' in data:
@@ -111,6 +111,27 @@ def reset_password() -> str:
         try:
             reset_token = AUTH.get_reset_password_token(email)
             return jsonify({"email": email, "reset_token": reset_token})
+        except ValueError:
+            abort(403)
+
+
+@app.route('/reset_password', methods=['PUT'], strict_slashes=False)
+def reset_password() -> str:
+    """Reset user password"""
+    data = request.form
+    if 'email' not in data:
+        return jsonify({"message": "email required"}), 400
+    if 'password' not in data:
+        return jsonify({"message": "password required"}), 400
+    if 'reset_token' not in data:
+        return jsonify({"message": "reset_token required"}), 400
+    else:
+        email = data.get('email')
+        password = data.get('password')
+        reset_token = data.get('reset_token')
+        try:
+            AUTH.update_password(reset_token, password)
+            return jsonify({"email": email, "message": "Password updated"})
         except ValueError:
             abort(403)
 
